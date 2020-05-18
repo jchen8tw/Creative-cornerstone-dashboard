@@ -43,7 +43,7 @@ export default (props) => {
                         lineHeight: "60px",
                         width: "60px",
                         height: "60px",
-                        background: colors[key],
+                        background: colors[key % 10],
                         borderRadius: "50%",
                         textAlign: "center",
                         verticalAlign: "middle",
