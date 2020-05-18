@@ -3,7 +3,6 @@ import numpy as np
 import requests
 import socketio
 import sys
-import requests
 
 
 # ================================================================
@@ -22,7 +21,7 @@ class Scoreboard:
         self.totalScore = 0
         self.team = teamName
         self.game = int(gameNum)
-        self.ip = 'http://localhost:3000'
+        self.ip = 'http://ec2-18-204-36-51.compute-1.amazonaws.com'
 
         print("{} wants to play Game{}!".format(self.team, self.game))
         print("connecting to server......{}".format(self.ip))
@@ -85,6 +84,9 @@ class Socket(socketio.ClientNamespace):
 
     def on_connect(self):
         print("connected")
+    
+    def on_invalid_mode(self):
+        print("Error:invalid gamemode!!")
 
     def on_game_end(self, data=None):
         print("game_end")
@@ -107,7 +109,7 @@ class Socket(socketio.ClientNamespace):
 
 
 if __name__ == '__main__':
-    myScoreboard = Scoreboard(None, 'haha', 1)
+    myScoreboard = Scoreboard(None, 'haha', 0)
     myScoreboard.add_UID("0087A9AB")
     myScoreboard.add_UID("B08676A2")
     print(myScoreboard.getCurrentScore())

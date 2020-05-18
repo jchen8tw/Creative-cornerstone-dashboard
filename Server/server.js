@@ -9,7 +9,7 @@ const nextHandler = nextApp.getRequestHandler();
 //uids
 const uids = require("./data/uid.json");
 const sequence = require("./data/sequence.json");
-const GAME_TIME = 10;
+const GAME_TIME = 120;
 // fake DB
 const db = {
     history: {
@@ -84,7 +84,7 @@ function endgame(socket) {
     }
     socket.broadcast.emit("game_end", {
         history: db.history[db.status.gamemode],
-        gamemode: db.status.gamemode
+        gamemode: db.status.gamemode,
     });
     socket.emit("game_end");
     //reset db status
@@ -99,8 +99,6 @@ function endgame(socket) {
     db.status.last_eaten_time = 120;
     db.visited = {};
 }
-
-
 
 // socket.io server
 io.on("connection", (socket) => {
@@ -152,6 +150,10 @@ io.on("connection", (socket) => {
     });
     socket.on("start_game", (data) => {
         //console.log(data.gamemode)
+        if (data.gamemode != 0 && data.gamemode != 1) {
+            socket.emit("invalid_mode");
+            return;
+        }
         if (!db.cur_game_countdown && !db.current_team) {
             db.status.gamemode = data.gamemode;
             db.current_team = data.team;
