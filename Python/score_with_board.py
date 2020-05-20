@@ -106,10 +106,14 @@ class Socket(socketio.ClientNamespace):
 
     def add_UID(self, UID_str):
         self.emit("add_UID", UID_str)
+    #secret backdoor for TA
+    def stop_game(self):
+        self.emit("stop_game")
 
 
 if __name__ == '__main__':
-    myScoreboard = Scoreboard(None, 'haha', 0)
-    myScoreboard.add_UID("0087A9AB")
-    myScoreboard.add_UID("B08676A2")
+    myScoreboard = Scoreboard(None, '訂閱我的channel', 0)
+    #myScoreboard.add_UID("B08676A2")
+    #myScoreboard.add_UID("0087A9AB")
+    #myScoreboard.Socket.emit("stop_game")
     print(myScoreboard.getCurrentScore())
