@@ -2,6 +2,7 @@ const app = require("express")();
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const next = require("next");
+const fs = require("fs");
 
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
@@ -64,6 +65,9 @@ const db = {
     cur_game_countdown: null,
     visited: {},
 };
+//read previous history
+db.history = JSON.parse(fs.readFileSync("./data/history.json", "utf-8"));
+
 function endgame(socket) {
     //console.log("game_ended");
     clearInterval(db.cur_game_countdown);
@@ -100,8 +104,16 @@ function endgame(socket) {
     db.status.gamemode = null;
     db.status.point = 0;
     db.status.current_sequence_index = 0;
-    db.status.last_eaten_time = 120;
+    db.status.last_eaten_time = GAME_TIME;
     db.visited = {};
+    //write previous history to file
+    fs.writeFile("./data/history.json", JSON.stringify(db.history), (err) => {
+        if (err) {
+            console.log("history write error");
+        } else {
+            console.log("history filewrite complet");
+        }
+    });
 }
 
 // socket.io server

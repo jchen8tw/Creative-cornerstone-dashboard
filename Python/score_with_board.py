@@ -21,7 +21,7 @@ class Scoreboard:
         self.totalScore = 0
         self.team = teamName
         self.game = int(gameNum)
-        self.ip = 'http://ec2-18-204-36-51.compute-1.amazonaws.com'
+        self.ip = 'http://localhost:3000'
 
         print("{} wants to play Game{}!".format(self.team, self.game))
         print("connecting to server......{}".format(self.ip))
@@ -113,7 +113,7 @@ class Socket(socketio.ClientNamespace):
 
 if __name__ == '__main__':
     myScoreboard = Scoreboard(None, '訂閱我的channel', 0)
-    #myScoreboard.add_UID("B08676A2")
+    myScoreboard.add_UID("B08676A2")
     #myScoreboard.add_UID("0087A9AB")
-    #myScoreboard.Socket.emit("stop_game")
+    myScoreboard.Socket.emit("stop_game")
     print(myScoreboard.getCurrentScore())
