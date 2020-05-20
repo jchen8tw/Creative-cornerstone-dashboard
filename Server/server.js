@@ -65,8 +65,12 @@ const db = {
     visited: {},
 };
 function endgame(socket) {
-    console.log("game_ended");
+    //console.log("game_ended");
     clearInterval(db.cur_game_countdown);
+    console.log("game ended");
+    console.log(
+        `Team ${db.current_team} got ${db.status.point} points at game${db.status.gamemode}.`
+    );
     if (
         !db.history[db.status.gamemode][db.current_team] ||
         db.history[db.status.gamemode][db.current_team].point <
@@ -103,6 +107,7 @@ function endgame(socket) {
 // socket.io server
 io.on("connection", (socket) => {
     console.log("connected");
+    console.log("Connect time:", new Date().toString().slice(0, 24));
     socket.on("add_UID", (data) => {
         //io.emit("update_score");
         //socket.emit("invalid_uid")
@@ -161,6 +166,10 @@ io.on("connection", (socket) => {
                 current_team: db.current_team,
                 gamemode: db.status.gamemode,
             });
+            console.log("start game");
+            console.log("Start time:", new Date().toString().slice(0, 24));
+            console.log("Current team:", data.team);
+            console.log("Game mode:", data.gamemode);
             db.cur_game_countdown = setInterval(() => {
                 if (db.time_remaining > 0) {
                     db.time_remaining = db.time_remaining - 1;
