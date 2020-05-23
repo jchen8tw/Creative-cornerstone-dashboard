@@ -124,6 +124,9 @@ io.on("connection", (socket) => {
         //io.emit("update_score");
         //socket.emit("invalid_uid")
         //record the time getting uid
+	console.log("UID:",data.uid_str);
+	//convert to upper case
+	data.uid_str = data.uid_str.toUpperCase();
         if (db.status.gamemode == 0) {
             if (!uids[data.uid_str]) {
                 socket.emit("UID_added", "uid not found.");
