@@ -10,7 +10,7 @@ const nextHandler = nextApp.getRequestHandler();
 //uids
 const uids = require("./data/uid.json");
 const sequence = require("./data/sequence.json");
-const GAME_TIME = 80;
+const GAME_TIME = 120;
 // fake DB
 const db = {
     history: {
@@ -111,7 +111,7 @@ function endgame(socket) {
         if (err) {
             console.log("history write error");
         } else {
-            console.log("history filewrite complet");
+            console.log("history filewrite complete");
         }
     });
 }
