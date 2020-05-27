@@ -1,5 +1,9 @@
 import pandas
-import numpy as np 
+import numpy as np
+import requests
+import socketio
+import sys
+
 
 # ================================================================
 # Scoreboard
@@ -9,34 +13,107 @@ import numpy as np
 #     return current score (int)
 # ================================================================
 
+
 class Scoreboard:
-    def __init__(self, filepath):
-        raw_data = np.array(pandas.read_csv(filepath))#.values
+    def __init__(self, filepath, teamName, gameNum):
+        # no need to read localfile
 
-        self.cardList = [int(a, 16) for a in raw_data.T[0]]
-        self.visitList = list()
         self.totalScore = 0
-        self.cardValue = dict()
+        self.team = teamName
+        self.game = int(gameNum)
+        self.ip = 'https://creative.ntuee.org'
 
-        for i in range(len(raw_data)):
-            self.cardValue[self.cardList[i]] = raw_data[i][1]
+        print("{} wants to play Game{}!".format(self.team, self.game))
+        print("connecting to server......{}".format(self.ip))
+        self.Socket = Socket(self.ip)
 
-        print ("Successfully read the UID file!")
+        try:
+            g = requests.get(self.ip+'/game_status')
+            playing_team = g.json()['current_team']
+            if(playing_team != None):
+                if(playing_team != teamName):
+                    print('{} is current playing.\nPlease wait {} seconds for retry.'.format(
+                        g.json()['current_team'], g.json()['time_remain']))
+                    self.Socket.disconnect()
+                    sys.exit(1)
+            else:
+                print("Game is starting.....")
+                self.Socket.start_game(
+                    {'gamemode': self.game, 'team': self.team})
+
+        except:
+            print("Failed to get game status or someone else is playing")
+            print("Exiting the game.....")
+
+            sys.exit(1)
 
     def add_UID(self, UID_str):
-        UID = int(UID_str,16)
-
-        if UID not in self.cardList:
-            print("This UID doesn't exist in the UID list file:", UID)
-        elif UID in self.visitList:
-        	print("This UID is already visited:", UID)
-        else:
-            point = self.cardValue[UID]
-            self.totalScore += point
-            print("A treasure is found! You got " + str(point) + " points.")
-            print("Current score: "+ str(self.totalScore))
-            print("")
-            self.visitList.append(UID)
+        self.Socket.add_UID({'uid_str': UID_str})
 
     def getCurrentScore(self):
-        return int(self.totalScore)
+        try:
+            r = requests.get(self.ip+"/current_score")
+            return r.json()['current_score']
+        except:
+            print("Failed to fetch current score")
+            return None
+        # return int(self.totalScore)
+
+# ================================================================
+# Socket interface
+#   mySocket = Socket(ip)
+# ================================================================
+
+
+class Socket(socketio.ClientNamespace):
+    sio = socketio.Client()
+
+    def __init__(self, ip):
+        #***********************#
+        # pass in the namespace '/'
+        # https://python-socketio.readthedocs.io/en/latest/client.html#class-based-namespaces
+        #***********************#
+        super().__init__('/')
+        self.ip = ip
+        try:
+            self.sio.connect(self.ip)
+        except:
+            print('Failed to connect to server')
+            sys.exit(1)
+        self.sio.register_namespace(self)
+
+    def on_connect(self):
+        print("connected")
+    
+    def on_invalid_mode(self):
+        print("Error:invalid gamemode!!")
+
+    def on_game_end(self, data=None):
+        print("game_end")
+        self.disconnect()
+
+    def on_game_started(self, data):
+        print("Game started!")
+        print("Playing game as\nTeam: {}\nMode: {}".format(
+            data['current_team'], data['gamemode']))
+        print("Please checkout {} for more information.".format(self.ip))
+
+    def on_UID_added(self, message):
+        print(message)
+
+    def start_game(self, gamenum):
+        self.emit("start_game", gamenum)
+
+    def add_UID(self, UID_str):
+        self.emit("add_UID", UID_str)
+    #secret backdoor for TA
+    def stop_game(self):
+        self.emit("stop_game")
+
+
+if __name__ == '__main__':
+    myScoreboard = Scoreboard(None, '藤原豆腐店', 1)
+    #myScoreboard.add_UID("B08676A2")
+    #myScoreboard.add_UID("0087A9AB")
+    myScoreboard.sio.emit("stop_game") 
+    print(myScoreboard.getCurrentScore())

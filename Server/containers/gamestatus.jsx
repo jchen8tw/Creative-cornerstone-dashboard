@@ -25,14 +25,19 @@ export default (props) => {
                         <h2>Status</h2>
                     </ListGroupItem>
                     <ListGroupItem>
-                        Gamemode:{" "}
-                        {status.gamemode == 0
-                            ? "game1"
-                            : status.gamemode == 1
-                            ? "game2"
-                            : "unknown"}
+                        <h3>points: {status.point}</h3>
                     </ListGroupItem>
-                    <ListGroupItem>points: {status.point}</ListGroupItem>
+                    <ListGroupItem>
+                        <h3>
+                            {" "}
+                            Gamemode:{" "}
+                            {status.gamemode == 0
+                                ? "game1"
+                                : status.gamemode == 1
+                                ? "game2"
+                                : "unknown"}
+                        </h3>
+                    </ListGroupItem>
                 </ListGroup>
             </div>
         </Container>
