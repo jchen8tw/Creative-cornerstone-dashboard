@@ -232,6 +232,21 @@ nextApp.prepare().then(() => {
             GAME_TIME: GAME_TIME,
         });
     });
+    app.get("/reset", (req,res) => {
+	if(req.query.pass === "taonly"){
+		fs.writeFile("./data/history.json",JSON.stringify({"0":{},"1":{}}),(err)=>{
+			if(!err){
+				console.log("reset_complete");
+				res.json({message: "reset_complete"});
+			}
+			else{
+				console.log(err);
+				res.json({error: "reset_error"});
+			}
+		});
+		db.history = {"0":{},"1":{}};
+	}
+    });
 
     app.get("*", (req, res) => {
         return nextHandler(req, res);

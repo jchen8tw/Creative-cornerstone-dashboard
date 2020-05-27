@@ -21,7 +21,7 @@ class Scoreboard:
         self.totalScore = 0
         self.team = teamName
         self.game = int(gameNum)
-        self.ip = 'http://localhost:3000'
+        self.ip = 'https://creative.ntuee.org/'
 
         print("{} wants to play Game{}!".format(self.team, self.game))
         print("connecting to server......{}".format(self.ip))
