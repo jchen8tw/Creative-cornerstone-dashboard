@@ -115,5 +115,4 @@ if __name__ == '__main__':
     myScoreboard = Scoreboard(None, '藤原豆腐店', 1)
     #myScoreboard.add_UID("B08676A2")
     #myScoreboard.add_UID("0087A9AB")
-    myScoreboard.sio.emit("stop_game") 
     print(myScoreboard.getCurrentScore())

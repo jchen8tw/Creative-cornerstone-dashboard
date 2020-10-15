@@ -115,5 +115,6 @@ if __name__ == '__main__':
     myScoreboard = Scoreboard(None, '訂閱我的channel', 0)
     myScoreboard.add_UID("70227DA2")
     #myScoreboard.add_UID("0087A9AB")
+    #this line 
     myScoreboard.Socket.emit("stop_game")
     print(myScoreboard.getCurrentScore())
