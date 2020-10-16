@@ -48,6 +48,13 @@ class Scoreboard:
             sys.exit(1)
 
     def add_UID(self, UID_str):
+        UID_type = type(UID_str)
+        UID_len = len(UID_str)
+        print("In add_UID, UID = {}".format(UID_str))
+        if(UID_type != type('')):
+            print("    UID type error! (Your type: {})".format(UID_type.__name__))
+        if(UID_len != 8):
+            print("    UID length error! (Your length: {})".format(UID_len))
         self.Socket.add_UID({'uid_str': UID_str})
 
     def getCurrentScore(self):
